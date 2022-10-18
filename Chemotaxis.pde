@@ -1,7 +1,6 @@
-PImage sprite;
 void setup() {
   size(500, 500);
-  sprite = loadImage("sprite.png");
+  colorMode(HSB, 360, 100, 100, 255);
   instances.add(new Bacteria(250, 250));
 }
 void draw() {
@@ -27,7 +26,7 @@ class Bacteria {
   public Bacteria(int x, int y) {
     this.coords = new float[]{x,y};
     this.direction = (float)Math.atan((this.coords[1]-mouseY)/(this.coords[0]-mouseX));
-    this.colour = (int)Math.round(Math.random()*0xffffff) & 0x00ffffff | 0xff000000;
+    this.colour = color((int)Math.round(Math.random()*255), 255, 255, 255);
   }
   
   public boolean checkHit() {
@@ -39,7 +38,7 @@ class Bacteria {
   }
   
   public void run() {
-    this.direction = (float)(Math.atan((mouseY-this.coords[1])/(mouseX-this.coords[0])) + (mouseX > this.coords[0] ? PI : 0) + Math.random()*0.6-0.3);
+    this.direction += Math.min(Math.max(this.direction-this.dirToMouse(), radians(330)), radians(30));
     double distance = Math.sqrt( Math.pow(this.coords[1]-mouseY, 2) + Math.pow((this.coords[0]-mouseX), 2));
     double magnitude = /*Math.pow(Math.max(700 - distance, 1), 1/6d)*/ -0.5 * Math.pow(distance, 1/4) + 3;
     this.coords[0] += magnitude*Math.cos(this.direction);
@@ -58,18 +57,21 @@ class Bacteria {
   private void checkBounds() {
     if (this.coords[0] < -20 || this.coords[0] > 520) this.coords[0] = Math.round(Math.random()*100+200);
     if (this.coords[1] < -20 || this.coords[1] > 520) this.coords[1] = Math.round(Math.random()*100+200);
+    this.direction = (float)this.dirToMouse();
   }
   
   public void draw() {
     pushMatrix();
     translate(this.coords[0], this.coords[1]);
     rotate(this.direction);
-    //else {
-      noStroke();
-      fill(this.colour);
-      ellipse(0, 0, 16, 10);
-    //}
-    image(sprite, 0, 0);
+    noStroke();
+    fill(this.colour);
+    ellipse(0, 0, 16, 10);
     popMatrix();
+  }
+  
+  private double dirToMouse() {
+      return Math.atan((mouseY-this.coords[1])/(mouseX-this.coords[0])) + (mouseX > this.coords[0] ? PI : 0);
+
   }
 }
