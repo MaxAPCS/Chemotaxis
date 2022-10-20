@@ -46,8 +46,6 @@ class Bacteria {
     this.direction += Math.min(Math.max(normalizeRadians(this.dirToMouse()-this.direction), radians(1)), radians(359));
     double distance = Math.sqrt(Math.pow(this.coords[1]-mouseY, 2) + Math.pow((this.coords[0]-mouseX), 2));
     double magnitude = /*Math.pow(Math.max(700 - distance, 1), 1/6d)*/ Math.pow(700-distance, 1/3f)/3;
-    System.out.println(distance+" - "+magnitude);
-
     this.coords[0] += magnitude*Math.cos(this.direction);
     this.coords[1] += magnitude*Math.sin(this.direction);
     checkBounds();
